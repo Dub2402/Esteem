@@ -1,0 +1,15 @@
+{
+	"token": "",
+	"women_reminders": "",
+	"women_dose": "",
+	"men_reminders": "",
+	"men_dose": "",
+	"start_random": {
+		"hour": 6,
+		"minute": 50
+	},
+	"start_dailydose": {
+		"hour": 18,
+		"minute": 18
+	}
+}
