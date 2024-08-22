@@ -58,7 +58,7 @@ def ProcessCommandStart(Message: types.Message):
 	User.set_expected_type(None)
 	Bot.send_message(
 		Message.chat.id, 
-		"Ну, привет!) ✌️\n\nА я знал, что тебя тоже ко мне занесёт! Что? Стало интересно, что это за штуковина. Тогда давай действовать! Поднимем тебе самооценочку! 😉😄"
+		"Ну, привет!) ✌️\n\nЯ знал, что тебя тоже ко мне занесёт. Давай-ка поднимем тебе самооценочку!"
 		)
 	Bot.send_message(
 		Message.chat.id, 
@@ -101,9 +101,10 @@ def ProcessText(Message: types.Message):
 	if User.expected_type == "Name":
 		User.set_property("Name", Message.text)
 		User.set_expected_type(None)
+		CallName = User.get_property("Name")
 		Bot.send_message(
 			Message.chat.id,
-			"Нормально-нормально! 😎")
+			f"Уже неплохо, {CallName}! 😎\nДостойное имя!")
 		Bot.send_message(
 			Message.chat.id,
 			"А ты вообще кто?", reply_markup= InlineKeyboardsBox.SelectionGender()
@@ -116,7 +117,7 @@ def ProcessTextNewReminder(Call: types.CallbackQuery):
 	
 	Bot.send_message(
 			Call.message.chat.id, 
-			"А я так и понял, что это самец!)",
+			"Я так и понял, что тут самец!)",
 			reply_markup=ReplyKeyboardBox.AddMenu(User))
 	SendButtonDose(User, Bot, Call, InlineKeyboardsBox)
 	
