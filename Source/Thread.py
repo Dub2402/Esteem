@@ -47,16 +47,18 @@ class Reminder:
 		for ID in UsersID:
 
 			User = self.__Manager.get_user(ID)
-			if User.get_property("Gender") =="W":
-				Sentence = ChoiceSentence(self.__reader.GetWR)
-			if User.get_property("Gender") =="M":
-				Sentence = ChoiceSentence(self.__reader.GetMR)
+			if User.get_property("Active"):
+				if User.get_property("Gender") =="Women":
+					Sentence = ChoiceSentence(self.__reader.GetWR)
+				if User.get_property("Gender") =="Men":
+					Sentence = ChoiceSentence(self.__reader.GetMR)
 
-			logging.info(f"Начата рассылка: {ID}, {Sentence} ")
-			CallName = User.get_property("Name")
-			try:	
-				self.__Bot.send_message(
-					ID,
-					text = f"{CallName}, {Sentence}"
-					)
-			except: User.set_chat_forbidden(True)
+				logging.info(f"Начата рассылка: {ID}, {Sentence} ")
+				CallName = User.get_property("Name")
+				try:	
+					self.__Bot.send_message(
+						ID,
+						text = f"{CallName}, {Sentence}"
+						)
+				except: User.set_chat_forbidden(True)
+			else: pass

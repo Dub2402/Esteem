@@ -12,10 +12,11 @@ class ReplyKeyboard:
 
 		# Генерация кнопок.
 		Dose = types.KeyboardButton("💉 ДОЗА")
-		Сhange = types.KeyboardButton("🔁 Сменить имя")
+		List = types.KeyboardButton("⚙️ Настройки")
 		Share = types.KeyboardButton("📢 Поделиться с друзьями")
+		Write = types.KeyboardButton("💟 Написать послание")
 
 		# Добавление кнопок в меню.
-		Menu.add(Dose, Share, Сhange, row_width = 2)
+		Menu.add(Dose, Share, List, Write, row_width = 2)
 		
 		return Menu
