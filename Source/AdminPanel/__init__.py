@@ -1,6 +1,7 @@
 from .InlineKeyboards import InlineKeyboards
 from .ReplyKeyboards import ReplyKeyboards
 from .Mailer import Mailer
+from ..Moderator import Moderator
 
 from dublib.TelebotUtils import UserData, UsersManager
 from telebot import TeleBot, types
@@ -264,11 +265,17 @@ class Decorators:
 		@bot.message_handler(content_types = ["text"], regexp = "📝 Модерация")
 		def Button(Message: types.Message):
 			User = users.auth(Message.from_user)
+			UnModerated = Moderator().GetUnModerated
+			print(UnModerated["Unmoderated"])
+			if UnModerated["Unmoderated"]["Women"]:
+				for i in UnModerated["Unmoderated"]["Women"]:
+					bot.send_message(
+						chat_id = Message.chat.id,
+						text = "Кнопка удалена.",
+						reply_markup = ReplyKeyboards().mailing(User)
+					)
+
 			
-			bot.send_message(
-				chat_id = Message.chat.id,
-				text = f"*📊 Статистика*",
-				parse_mode = "MarkdownV2")
 
 		@bot.message_handler(content_types = ["text"], regexp = "🕹️ Удалить кнопку")
 		def Button(Message: types.Message):

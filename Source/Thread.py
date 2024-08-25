@@ -1,21 +1,22 @@
 from .Reader import Reader
 from .Instruments import ChoiceSentence
 
+from apscheduler.schedulers.background import BackgroundScheduler
 from dublib.TelebotUtils import UsersManager
-from dublib.Methods.JSON import WriteJSON
-from dublib.Methods.JSON import ReadJSON
 from telebot import TeleBot
 
+import  datetime
 import os
 import random
 import logging
 
 class Reminder:
-	def __init__(self, bot: TeleBot, Manager: UsersManager, Settings: dict, reader: Reader):
+	def __init__(self, bot: TeleBot, Manager: UsersManager, Settings: dict, reader: Reader, scheduler: BackgroundScheduler):
 		self.__Bot = bot
 		self.__Manager = Manager
 		self.__Settings = Settings
 		self.__reader = reader
+		self.__scheduler = scheduler
 
 	def __GetUsersID(self) -> list[int]:
 		# Получение списка файлов в директории.
@@ -34,12 +35,15 @@ class Reminder:
 
 		return UsersID
 	
-	def StartRandomaizer(self):
-		Hour = random.randint(7, 20)
-		Minute = random.randint(0, 59)
-		self.__Settings["start_dailydose"]["hour"] = Hour
-		self.__Settings["start_dailydose"]["minute"] = Minute
-		WriteJSON("Settings.json", self.__Settings)
+	# def Reschedule(self):
+	# 	print(12)
+	# 	Hour = random.randint(7, 20)
+	# 	Minute = random.randint(0, 59)
+	# 	self.__scheduler.reschedule_job(job_id='job_1', trigger='cron', hour =22, minute=33)
+	# 	self.__Settings["start_dailydose"]["hour"] = Hour
+	# 	self.__Settings["start_dailydose"]["minute"] = Minute
+	# 	WriteJSON("Settings.json", self.__Settings)
+
 
 	def StartDailyDose(self):
 		UsersID = self.__GetUsersID()
@@ -48,12 +52,12 @@ class Reminder:
 
 			User = self.__Manager.get_user(ID)
 			if User.get_property("Active"):
-				if User.get_property("Gender") =="Women":
+				if User.get_property("Gender") == "Women":
 					Sentence = ChoiceSentence(self.__reader.GetWR)
-				if User.get_property("Gender") =="Men":
+				if User.get_property("Gender") == "Men":
 					Sentence = ChoiceSentence(self.__reader.GetMR)
 
-				logging.info(f"Начата рассылка: {ID}, {Sentence} ")
+				logging.info(f"Начата рассылка: {ID}, {Sentence}")
 				CallName = User.get_property("Name")
 				try:	
 					self.__Bot.send_message(
@@ -62,3 +66,18 @@ class Reminder:
 						)
 				except: User.set_chat_forbidden(True)
 			else: pass
+		Hour = str(random.randint(7, 20))
+		Minute = str(random.randint(0, 59))
+		today = datetime.datetime.today()
+		HourNow = datetime.datetime.now().strftime("%H")
+		MinuteNow = datetime.datetime.now().strftime("%M")
+		tomorrow = today + datetime.timedelta(days=1)
+		logging.info(f"Новое время {Hour}, {Minute}")
+		if Hour > HourNow: self.__scheduler.reschedule_job(job_id='job_1', trigger='cron', start_date = today, hour =Hour, minute=Minute)
+		if Hour == HourNow:
+			if Minute> MinuteNow: self.__scheduler.reschedule_job(job_id='job_1', trigger='cron', start_date = today, hour =Hour, minute=Minute)
+			if Minute == MinuteNow:self.__scheduler.reschedule_job(job_id='job_1', trigger='cron', hour =Hour, minute=Minute)
+			if Minute < MinuteNow: self.__scheduler.reschedule_job(job_id='job_1', trigger='cron', start_date = tomorrow, hour =Hour, minute=Minute)
+		if Hour < HourNow: self.__scheduler.reschedule_job(job_id='job_1', trigger='cron', start_date = tomorrow, hour =Hour, minute=Minute)
+		
+

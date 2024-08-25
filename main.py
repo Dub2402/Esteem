@@ -49,7 +49,7 @@ InlineKeyboardsBox = InlineKeyboards()
 ReplyKeyboardBox = ReplyKeyboard()
 reader = Reader(Settings)
 scheduler = BackgroundScheduler()
-reminder = Reminder(Bot, Manager, Settings, reader)
+reminder = Reminder(Bot, Manager, Settings, reader, scheduler)
 AdminPanel = Panel()
 moderator = Moderator()
 
@@ -57,15 +57,13 @@ moderator = Moderator()
 # >>>>> НАСТРОЙКИ APSHEDULER <<<<< #
 #==========================================================================================#
 
-StartRandom = Settings["start_random"]
 StartDailyDose = Settings["start_dailydose"]
 
 #==========================================================================================#
 # >>>>> ДОБАВЛЕНИЕ ЗАДАНИЙ В APSHEDULER <<<<< #
 #==========================================================================================#
 
-scheduler.add_job(reminder.StartRandomaizer, 'cron', hour = StartRandom["hour"], minute=StartRandom["minute"])
-scheduler.add_job(reminder.StartDailyDose, 'cron', hour = StartDailyDose["hour"], minute=StartDailyDose["minute"])
+job = scheduler.add_job(func=reminder.StartDailyDose, trigger='cron', hour = StartDailyDose["hour"], minute=StartDailyDose["minute"], id = 'job_1')
 scheduler.start()
 
 AdminPanel.decorators.commands(Bot, Manager, Settings["password"])
@@ -73,6 +71,7 @@ AdminPanel.decorators.commands(Bot, Manager, Settings["password"])
 @Bot.message_handler(commands=["start"])
 def ProcessCommandStart(Message: types.Message):
 	User = Manager.auth(Message.from_user)
+	User.set_property("Active", True)
 	User.set_expected_type(None)
 	Bot.send_message(
 		Message.chat.id, 
