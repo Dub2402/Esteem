@@ -7,6 +7,7 @@ from dublib.TelebotUtils import UserData, UsersManager
 from telebot import TeleBot, types
 
 import enum
+import time
 
 #==========================================================================================#
 # >>>>> СТРУКТУРЫ <<<<< #
@@ -96,6 +97,31 @@ class Decorators:
 				
 			else:
 				User.set_expected_type(None)
+		
+
+		@bot.callback_query_handler(func = lambda Callback: Callback.data.startswith("Men"))
+		def InlineButton(Call: types.CallbackQuery):
+			User = users.auth(Call.from_user)
+			Moderator().SendToAdmin(bot, User.id, Call.data)
+			bot.answer_callback_query(Call.id)
+
+		@bot.callback_query_handler(func = lambda Callback: Callback.data.startswith("Women"))
+		def InlineButton(Call: types.CallbackQuery):
+			User = users.auth(Call.from_user)
+			Moderator().SendToAdmin(bot, User.id, Call.data)
+			bot.answer_callback_query(Call.id)
+
+		@bot.callback_query_handler(func = lambda Callback: Callback.data.startswith("Approve_sentence"))
+		def InlineButton(Call: types.CallbackQuery):
+			User = users.auth(Call.from_user)
+			print(1)
+			bot.answer_callback_query(Call.id)
+
+		@bot.callback_query_handler(func = lambda Callback: Callback.data.startswith("Delete_sentence"))
+		def InlineButton(Call: types.CallbackQuery):
+			User = users.auth(Call.from_user)
+			Moderator().ModerationDelete(bot, User.id, Call.data)
+			bot.answer_callback_query(Call.id)
 
 	def photo(self, bot: TeleBot, users: UsersManager):
 		"""
@@ -265,17 +291,11 @@ class Decorators:
 		@bot.message_handler(content_types = ["text"], regexp = "📝 Модерация")
 		def Button(Message: types.Message):
 			User = users.auth(Message.from_user)
-			UnModerated = Moderator().GetUnModerated
-			print(UnModerated["Unmoderated"])
-			if UnModerated["Unmoderated"]["Women"]:
-				for i in UnModerated["Unmoderated"]["Women"]:
-					bot.send_message(
-						chat_id = Message.chat.id,
-						text = "Кнопка удалена.",
-						reply_markup = ReplyKeyboards().mailing(User)
-					)
-
-			
+			bot.send_message(
+				chat_id = Message.chat.id,
+				text = "Выберите пол, для которого необходимо модерировать послания:",
+				reply_markup= InlineKeyboards().ModerationGender()
+			)
 
 		@bot.message_handler(content_types = ["text"], regexp = "🕹️ Удалить кнопку")
 		def Button(Message: types.Message):

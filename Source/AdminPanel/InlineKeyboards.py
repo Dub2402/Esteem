@@ -25,4 +25,15 @@ class InlineKeyboards:
 		Menu.add(Cancel, row_width = 1)
 
 		return Menu
+	
+	def ModerationGender(admin: UserData):
+
+		Menu = types.InlineKeyboardMarkup()
+
+		ModMens = types.InlineKeyboardButton("Mens", callback_data = "Men")
+		ModWomens = types.InlineKeyboardButton("Womens", callback_data = "Women")
+		
+		Menu.add(ModMens, ModWomens, row_width = 2)
+		
+		return Menu
 		
