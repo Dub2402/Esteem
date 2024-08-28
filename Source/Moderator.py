@@ -7,26 +7,96 @@ class Moderator:
 
     @property
     def GetUnModerated(self):
-        return self.UnModerated
+        return self.Data
     
     def __init__(self) -> None:
-        self.UnModerated = ReadJSON("Data/Moderation/Moderation.json")
-
+        self.Data = ReadJSON("Data/Moderation/Moderation.json")
+        
     def __Save(self, Data: dict) -> None:
         WriteJSON("Data/Moderation/Moderation.json", Data)
-        
-    def SaveUserSentences(self, sentence: str, gender: str):
-        self.UnModerated["Unmoderated"][gender].append(sentence)
-        self.__Save(self.__UnModerated)
 
+    def __GetFreeID(self) -> int:
+        ID = 1
+        for key in self.Data.keys():
+            if ID <= int(key): ID = int(key) + 1
+            else: pass
+        return ID
+                
+    def SaveUserSentences(self, sentence: str, gender: str):
+        self.Data[self.__GetFreeID()] = {"gender": gender, "sentence": sentence, "status": "add"}
+        self.__Save(self.Data)
 
     def SendToAdmin(self, bot: TeleBot, id: int, gender: str):
-        for Index in range(0,4):
-            bot.send_message(
-                id, 
-                self.UnModerated["Unmoderated"][gender][Index],
-                reply_markup=InlineKeyboards().CheckModeration()
-            )
+        Count = 0
+        for ID_Sentence in self.Data.keys():
+
+            if self.Data[ID_Sentence]["gender"] == gender and self.Data[ID_Sentence]["status"] == "add":
+                Count +=1 
+                Sentence = self.Data[ID_Sentence]["sentence"]
+                bot.send_message(
+                    id,
+                    Sentence,
+                    reply_markup = InlineKeyboards().CheckModeration(Sentence, ID_Sentence, gender)
+                    )
+                return
+    
+        if Count <1:
+                bot.send_message(
+                    id,
+                    "Послания отсутствуют")
+                return
+
+    
+    def ModerationApprove(self, bot: TeleBot, id, Message, Sentence: str, ID_Sentence: str, gender: str):
+        self.Data[ID_Sentence]["status"] = "to_excel"
+        self.__Save(self.Data)
+        bot.delete_message(id, Message)
+        Count = 0
+        for ID_Sentence in self.Data.keys():
+            if self.Data[ID_Sentence]["gender"] != gender and self.Data[ID_Sentence]["status"] == "add":
+                Count +=1 
+                Sentence = self.Data[ID_Sentence]["sentence"]
+                bot.send_message(
+                    id,
+                    Sentence,
+                    reply_markup = InlineKeyboards().CheckModeration(Sentence, ID_Sentence, gender)
+                    )
+                break
+
+        if Count <1:
+                bot.send_message(
+                    id,
+                    "Послания отсутствуют")
+                return
+        
+    def ModerationDelete(self, bot: TeleBot, id, Message, Sentence: str, ID_Sentence: str, gender: str):
+        del self.Data[ID_Sentence]
+        self.__Save(self.Data)
+        bot.delete_message(id, Message)
+        Count = 0
+        for ID_Sentence in self.Data.keys():
+
+            if self.Data[ID_Sentence]["gender"] == gender and self.Data[ID_Sentence]["status"] == "add":
+                Count +=1
+                Sentence = self.Data[ID_Sentence]["sentence"]
+                bot.send_message(
+                    id,
+                    Sentence,
+                    reply_markup = InlineKeyboards().CheckModeration(Sentence, ID_Sentence, gender)
+                    )
+                break
+        if Count <1:
+                bot.send_message(
+                    id,
+                    "Послания отсутствуют")
+                return
+           
+        
+
+
+      
+
+
 
 
         

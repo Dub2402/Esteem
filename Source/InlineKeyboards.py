@@ -117,13 +117,13 @@ class InlineKeyboards:
 
 		return Menu
 	
-	def CheckModeration(self) -> types.InlineKeyboardMarkup:
+	def CheckModeration(self, Sentence, ID_Sentence,gender) -> types.InlineKeyboardMarkup:
 		# Кнопочное меню.
 		Menu = types.InlineKeyboardMarkup()
 
 		# Генерация кнопок.
-		Approve = types.InlineKeyboardButton("🟢 Одобрить", callback_data = f"Approve_sentence")
-		Delete = types.InlineKeyboardButton("🔴 Удалить", callback_data = f"Delete_sentence")
+		Approve = types.InlineKeyboardButton("🟢 Одобрить", callback_data = f"Approve_sentence_{Sentence}_{ID_Sentence}_{gender}")
+		Delete = types.InlineKeyboardButton("🔴 Удалить", callback_data = f"Delete_sentence_{Sentence}_{ID_Sentence}_{gender}")
 		# Добавление кнопок в меню.
 		Menu.add(Approve, Delete, row_width= 1) 
 

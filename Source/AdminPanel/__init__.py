@@ -114,14 +114,24 @@ class Decorators:
 		@bot.callback_query_handler(func = lambda Callback: Callback.data.startswith("Approve_sentence"))
 		def InlineButton(Call: types.CallbackQuery):
 			User = users.auth(Call.from_user)
-			print(1)
-			bot.answer_callback_query(Call.id)
+			gender = Call.data.split("_")[-1]
+			ID_Sentence = Call.data.split("_")[-2]
+			Sentence = Call.data.split("_")[-3]
+			try: 
+				Moderator().ModerationApprove(bot, User.id, Call.message.id, Sentence, ID_Sentence, gender)
+				bot.answer_callback_query(Call.id)
+			except: bot.answer_callback_query(Call.id)
 
 		@bot.callback_query_handler(func = lambda Callback: Callback.data.startswith("Delete_sentence"))
 		def InlineButton(Call: types.CallbackQuery):
 			User = users.auth(Call.from_user)
-			Moderator().ModerationDelete(bot, User.id, Call.data)
-			bot.answer_callback_query(Call.id)
+			gender = Call.data.split("_")[-1]
+			ID_Sentence = Call.data.split("_")[-2]
+			Sentence = Call.data.split("_")[-3]
+			try: 
+				Moderator().ModerationDelete(bot, User.id, Call.message.id, Sentence, ID_Sentence, gender)
+				bot.answer_callback_query(Call.id)
+			except: bot.answer_callback_query(Call.id)
 
 	def photo(self, bot: TeleBot, users: UsersManager):
 		"""
@@ -281,7 +291,6 @@ class Decorators:
 
 			for user in users.users:
 				if user.is_chat_forbidden: BlockedUsersCount += 1
-
 			bot.send_message(
 				chat_id = Message.chat.id,
 				text = f"*📊 Статистика*\n\n👤 Всего пользователей: {UsersCount}\n⭐ Из них Premium: {PremiumUsersCount}\n⛔ Заблокировали: {BlockedUsersCount}",
@@ -294,7 +303,7 @@ class Decorators:
 			bot.send_message(
 				chat_id = Message.chat.id,
 				text = "Выберите пол, для которого необходимо модерировать послания:",
-				reply_markup= InlineKeyboards().ModerationGender()
+				reply_markup = InlineKeyboards().ModerationGender()
 			)
 
 		@bot.message_handler(content_types = ["text"], regexp = "🕹️ Удалить кнопку")

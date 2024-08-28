@@ -33,11 +33,7 @@ MakeRootDirectories(["Data/Moderation"])
 
 if os.path.exists("Data/Moderation/Moderation.json"): pass
 else: 
-	DefaultJson = {
-	"Unmoderated": {"Men":[], "Women":[]},
-	"ToDirector": {"Men":[], "Women":[]},
-	"Moderated": {"Men":[], "Women":[]}
-	}
+	DefaultJson = {}
 	WriteJSON("Data/Moderation/Moderation.json", DefaultJson)
 
 # Очистка консоли.
