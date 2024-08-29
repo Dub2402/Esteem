@@ -17,7 +17,8 @@ class ReplyKeyboards:
 		Statistics = types.KeyboardButton("📊 Статистика")
 		Close = types.KeyboardButton("❌ Закрыть")
 		Moderation = types.KeyboardButton("📝 Модерация")
-		Menu.add(Mailing, Statistics, Close, Moderation, row_width = 2)
+		Unload = types.KeyboardButton("જ⁀➴ Выгрузка")
+		Menu.add(Mailing, Statistics, Moderation, Unload, Close, row_width = 2)
 
 		return Menu
 

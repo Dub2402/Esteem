@@ -3,6 +3,8 @@ from .InlineKeyboards import InlineKeyboards
 from dublib.Methods.JSON import ReadJSON, WriteJSON
 from telebot import TeleBot
 
+import pandas
+
 class Moderator:
 
     @property
@@ -46,14 +48,13 @@ class Moderator:
                     "Послания отсутствуют")
                 return
 
-    
     def ModerationApprove(self, bot: TeleBot, id, Message, Sentence: str, ID_Sentence: str, gender: str):
         self.Data[ID_Sentence]["status"] = "to_excel"
         self.__Save(self.Data)
         bot.delete_message(id, Message)
         Count = 0
         for ID_Sentence in self.Data.keys():
-            if self.Data[ID_Sentence]["gender"] != gender and self.Data[ID_Sentence]["status"] == "add":
+            if self.Data[ID_Sentence]["gender"] == gender and self.Data[ID_Sentence]["status"] == "add":
                 Count +=1 
                 Sentence = self.Data[ID_Sentence]["sentence"]
                 bot.send_message(
@@ -91,7 +92,23 @@ class Moderator:
                     "Послания отсутствуют")
                 return
            
+    def Unload(self):
+        self.BufferMens = {"Данные": []}
+        self.BufferWomens = {"Данные": []}
         
+        for ID_Sentence in self.Data.keys():
+
+            if self.Data[ID_Sentence]["gender"] == "Men" and self.Data[ID_Sentence]["status"] == "to_excel":
+                print(self.Data[ID_Sentence]["sentence"])
+                self.BufferMens["Данные"].append(self.Data[ID_Sentence]["sentence"])
+                print(self.BufferMens)
+
+            if self.Data[ID_Sentence]["gender"] == "Women" and self.Data[ID_Sentence]["status"] == "to_excel":
+                print(self.Data[ID_Sentence]["sentence"])
+                self.BufferWomens["Данные"].append(self.Data[ID_Sentence]["sentence"])
+                print(self.BufferWomens)
+            df = pandas.DataFrame.from_dict(self.BufferWomens)
+            df.to_excel(f"oz.xlsx", index= False)
 
 
       

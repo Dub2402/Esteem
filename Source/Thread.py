@@ -34,16 +34,6 @@ class Reminder:
 			UsersID.append(ID)
 
 		return UsersID
-	
-	# def Reschedule(self):
-	# 	print(12)
-	# 	Hour = random.randint(7, 20)
-	# 	Minute = random.randint(0, 59)
-	# 	self.__scheduler.reschedule_job(job_id='job_1', trigger='cron', hour =22, minute=33)
-	# 	self.__Settings["start_dailydose"]["hour"] = Hour
-	# 	self.__Settings["start_dailydose"]["minute"] = Minute
-	# 	WriteJSON("Settings.json", self.__Settings)
-
 
 	def StartDailyDose(self):
 		UsersID = self.__GetUsersID()
@@ -73,11 +63,11 @@ class Reminder:
 		MinuteNow = datetime.datetime.now().strftime("%M")
 		tomorrow = today + datetime.timedelta(days=1)
 		logging.info(f"Новое время {Hour}, {Minute}")
-		if Hour > HourNow: self.__scheduler.reschedule_job(job_id='job_1', trigger='cron', start_date = today, hour =Hour, minute=Minute)
+		if Hour > HourNow: self.__scheduler.reschedule_job(job_id='job_1', trigger='cron', start_date = tomorrow, hour =Hour, minute=Minute)
 		if Hour == HourNow:
-			if Minute> MinuteNow: self.__scheduler.reschedule_job(job_id='job_1', trigger='cron', start_date = today, hour =Hour, minute=Minute)
+			if Minute> MinuteNow: self.__scheduler.reschedule_job(job_id='job_1', trigger='cron', start_date = tomorrow, hour =Hour, minute=Minute)
 			if Minute == MinuteNow:self.__scheduler.reschedule_job(job_id='job_1', trigger='cron', hour =Hour, minute=Minute)
-			if Minute < MinuteNow: self.__scheduler.reschedule_job(job_id='job_1', trigger='cron', start_date = tomorrow, hour =Hour, minute=Minute)
-		if Hour < HourNow: self.__scheduler.reschedule_job(job_id='job_1', trigger='cron', start_date = tomorrow, hour =Hour, minute=Minute)
+			if Minute < MinuteNow: self.__scheduler.reschedule_job(job_id='job_1', trigger='cron', start_date = today, hour =Hour, minute=Minute)
+		if Hour < HourNow: self.__scheduler.reschedule_job(job_id='job_1', trigger='cron', start_date = today, hour =Hour, minute=Minute)
 		
 

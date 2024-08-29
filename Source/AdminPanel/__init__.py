@@ -306,6 +306,11 @@ class Decorators:
 				reply_markup = InlineKeyboards().ModerationGender()
 			)
 
+		@bot.message_handler(content_types = ["text"], regexp = "જ⁀➴ Выгрузка")
+		def Button(Message: types.Message):
+			User = users.auth(Message.from_user)
+			Moderator().Unload()
+
 		@bot.message_handler(content_types = ["text"], regexp = "🕹️ Удалить кнопку")
 		def Button(Message: types.Message):
 			User = users.auth(Message.from_user)
