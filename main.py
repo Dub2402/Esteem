@@ -47,7 +47,6 @@ reader = Reader(Settings)
 scheduler = BackgroundScheduler()
 reminder = Reminder(Bot, Manager, Settings, reader, scheduler)
 AdminPanel = Panel()
-moderator = Moderator()
 
 #==========================================================================================#
 # >>>>> НАСТРОЙКИ APSHEDULER <<<<< #
@@ -93,11 +92,11 @@ AdminPanel.decorators.reply_keyboards(Bot, Manager)
 @Bot.message_handler(content_types = ["text"], regexp = "📢 Поделиться с друзьями")
 def ProcessShareWithFriends(Message: types.Message):
 	User = Manager.auth(Message.from_user)
-	
-	Bot.send_message(
+
+	Bot.send_photo(
 		Message.chat.id, 
-		# photo = Settings["qr_id"],
-		'@Ddoza_bot\n@Ddoza_bot\n@Ddoza_bot\n\nБот взаимной поддержки и повышения самооценки! 😎', 
+		photo = Settings["qr_id"],
+		caption='@Ddoza_bot\n@Ddoza_bot\n@Ddoza_bot\n\nБот взаимной поддержки и повышения самооценки! 😎', 
 		reply_markup=InlineKeyboardsBox.AddShare()
 		)
 
@@ -183,7 +182,7 @@ def ProcessWithoutReminders(Call: types.CallbackQuery):
 @Bot.callback_query_handler(func = lambda Callback: Callback.data.startswith("Men"))
 def ProcessMen(Call: types.CallbackQuery):
 	User = Manager.auth(Call.from_user)
-	User.set_property("Gender","Men")
+	User.set_property("Gender", "Men")
 	Bot.send_message(
 		Call.message.chat.id, 
 		"Я так и понял, что тут самец!)",
@@ -264,7 +263,7 @@ def ProcessEdit(Call: types.CallbackQuery):
 def ProcessSend(Call: types.CallbackQuery):
 	User = Manager.auth(Call.from_user)
 	try: 
-		moderator.SaveUserSentences(User.get_property("Moderation"), User.get_property("WriteFor"))
+		Moderator().SaveUserSentences(User.get_property("Moderation"), User.get_property("WriteFor"))
 		Bot.send_message(
 				Call.message.chat.id, 
 				"Супер! Текст принят!\nМодерация занимает от 1 до 2 недель.\nСкоро твоё послание увидит большой мир! 😉"

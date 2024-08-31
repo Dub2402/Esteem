@@ -98,18 +98,34 @@ class Decorators:
 			else:
 				User.set_expected_type(None)
 		
-
-		@bot.callback_query_handler(func = lambda Callback: Callback.data.startswith("Men"))
+		@bot.callback_query_handler(func = lambda Callback: Callback.data.startswith("Mens"))
 		def InlineButton(Call: types.CallbackQuery):
 			User = users.auth(Call.from_user)
 			Moderator().SendToAdmin(bot, User.id, Call.data)
 			bot.answer_callback_query(Call.id)
 
-		@bot.callback_query_handler(func = lambda Callback: Callback.data.startswith("Women"))
+		@bot.callback_query_handler(func = lambda Callback: Callback.data.startswith("Womens"))
 		def InlineButton(Call: types.CallbackQuery):
 			User = users.auth(Call.from_user)
 			Moderator().SendToAdmin(bot, User.id, Call.data)
 			bot.answer_callback_query(Call.id)
+
+		@bot.callback_query_handler(func = lambda Callback: Callback.data.startswith("UnloadMens"))
+		def InlineButton(Call: types.CallbackQuery):
+			User = users.auth(Call.from_user)
+			try:
+				Moderator().UnloadMen(bot, Call.message.chat.id)
+			except: pass
+			bot.answer_callback_query(Call.id)
+
+		@bot.callback_query_handler(func = lambda Callback: Callback.data.startswith("UnloadWomens"))
+		def InlineButton(Call: types.CallbackQuery):
+			User = users.auth(Call.from_user)
+			try:
+				Moderator().UnloadWomen(bot, Call.message.chat.id)
+			except: pass
+			bot.answer_callback_query(Call.id)
+
 
 		@bot.callback_query_handler(func = lambda Callback: Callback.data.startswith("Approve_sentence"))
 		def InlineButton(Call: types.CallbackQuery):
@@ -309,7 +325,11 @@ class Decorators:
 		@bot.message_handler(content_types = ["text"], regexp = "જ⁀➴ Выгрузка")
 		def Button(Message: types.Message):
 			User = users.auth(Message.from_user)
-			Moderator().Unload()
+			bot.send_message(
+				chat_id = Message.chat.id,
+				text = "Выберите пол, для которого необходимо получить файлы excel:",
+				reply_markup = InlineKeyboards().UnloadGender()
+			)
 
 		@bot.message_handler(content_types = ["text"], regexp = "🕹️ Удалить кнопку")
 		def Button(Message: types.Message):

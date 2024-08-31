@@ -5,6 +5,7 @@
 	"men_reminders": "",
 	"men_dose": "",
 	"password": "",
+	"qr_id": "",
 	"start_dailydose": {
 		"hour": 18,
 		"minute": 18

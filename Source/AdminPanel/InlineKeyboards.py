@@ -30,10 +30,21 @@ class InlineKeyboards:
 
 		Menu = types.InlineKeyboardMarkup()
 
-		ModMens = types.InlineKeyboardButton("Mens", callback_data = "Men")
-		ModWomens = types.InlineKeyboardButton("Womens", callback_data = "Women")
+		ModMens = types.InlineKeyboardButton("Mens", callback_data = "Mens")
+		ModWomens = types.InlineKeyboardButton("Womens", callback_data = "Womens")
 		
 		Menu.add(ModMens, ModWomens, row_width = 2)
+		
+		return Menu
+
+	def UnloadGender(admin: UserData):
+
+		Menu = types.InlineKeyboardMarkup()
+
+		UnlMens = types.InlineKeyboardButton("Mens", callback_data = "UnloadMens")
+		UnlWomens = types.InlineKeyboardButton("Womens", callback_data = "UnloadWomens")
+		
+		Menu.add(UnlMens, UnlWomens, row_width = 2)
 		
 		return Menu
 		

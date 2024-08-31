@@ -2,8 +2,10 @@ from .InlineKeyboards import InlineKeyboards
 
 from dublib.Methods.JSON import ReadJSON, WriteJSON
 from telebot import TeleBot
+from datetime import date
 
 import pandas
+import os
 
 class Moderator:
 
@@ -32,7 +34,7 @@ class Moderator:
         Count = 0
         for ID_Sentence in self.Data.keys():
 
-            if self.Data[ID_Sentence]["gender"] == gender and self.Data[ID_Sentence]["status"] == "add":
+            if self.Data[ID_Sentence]["gender"] == gender.replace("s", "") and self.Data[ID_Sentence]["status"] == "add":
                 Count +=1 
                 Sentence = self.Data[ID_Sentence]["sentence"]
                 bot.send_message(
@@ -54,7 +56,7 @@ class Moderator:
         bot.delete_message(id, Message)
         Count = 0
         for ID_Sentence in self.Data.keys():
-            if self.Data[ID_Sentence]["gender"] == gender and self.Data[ID_Sentence]["status"] == "add":
+            if self.Data[ID_Sentence]["gender"] == gender.replace("s", "") and self.Data[ID_Sentence]["status"] == "add":
                 Count +=1 
                 Sentence = self.Data[ID_Sentence]["sentence"]
                 bot.send_message(
@@ -77,7 +79,7 @@ class Moderator:
         Count = 0
         for ID_Sentence in self.Data.keys():
 
-            if self.Data[ID_Sentence]["gender"] == gender and self.Data[ID_Sentence]["status"] == "add":
+            if self.Data[ID_Sentence]["gender"] == gender.replace("s", "") and self.Data[ID_Sentence]["status"] == "add":
                 Count +=1
                 Sentence = self.Data[ID_Sentence]["sentence"]
                 bot.send_message(
@@ -92,28 +94,68 @@ class Moderator:
                     "Послания отсутствуют")
                 return
            
-    def Unload(self):
-        self.BufferMens = {"Данные": []}
+    def UnloadWomen(self, bot: TeleBot, id: int):
+        NameFile = "Women"
+        today = date.today()
         self.BufferWomens = {"Данные": []}
+        CopyData = self.Data.copy()
         
-        for ID_Sentence in self.Data.keys():
+        for ID_Sentence in CopyData.keys():
+            
+            if self.Data[ID_Sentence]["gender"] == "Women" and self.Data[ID_Sentence]["status"] == "to_excel":
+                self.BufferWomens["Данные"].append(self.Data[ID_Sentence]["sentence"])
+                del self.Data[ID_Sentence]
+                self.__Save(self.Data)
+                
+        if self.BufferWomens["Данные"]:
+            df = pandas.DataFrame.from_dict(self.BufferWomens)
+            df.to_excel(f"{NameFile}_{today}.xlsx", index= False)
+        
+        else:
+            bot.send_message(
+            chat_id = id,
+            text = "Нет данных в файле для модерации женщин."
+            )
+
+        if os.path.exists(f"{NameFile}_{today}.xlsx"):
+            with open(f"{NameFile}_{today}.xlsx", "rb") as FileReader:
+                BinaryArchive = FileReader.read()
+        
+            try:
+                bot.send_document(id, BinaryArchive, visible_file_name = f"{NameFile}_{today}.xlsx")
+                os.remove(f"{NameFile}_{today}.xlsx")
+            except Exception as E:
+                logging.info(E)
+
+    def UnloadMen(self, bot: TeleBot, id: int):
+        NameFile = "Men"
+        today = date.today()
+        self.BufferMens = {"Данные": []}
+        CopyData = self.Data.copy()
+    
+        for ID_Sentence in CopyData.keys():
 
             if self.Data[ID_Sentence]["gender"] == "Men" and self.Data[ID_Sentence]["status"] == "to_excel":
-                print(self.Data[ID_Sentence]["sentence"])
                 self.BufferMens["Данные"].append(self.Data[ID_Sentence]["sentence"])
-                print(self.BufferMens)
+                del self.Data[ID_Sentence]
+                self.__Save(self.Data)
+            
+        if self.BufferMens["Данные"]:
+            df = pandas.DataFrame.from_dict(self.BufferMens)
+            df.to_excel(f"{NameFile}_{today}.xlsx", index= False)
+        else:
+            bot.send_message(
+            chat_id = id,
+            text = "Нет данных в файле для модерации мужчин."
+            )
 
-            if self.Data[ID_Sentence]["gender"] == "Women" and self.Data[ID_Sentence]["status"] == "to_excel":
-                print(self.Data[ID_Sentence]["sentence"])
-                self.BufferWomens["Данные"].append(self.Data[ID_Sentence]["sentence"])
-                print(self.BufferWomens)
-            df = pandas.DataFrame.from_dict(self.BufferWomens)
-            df.to_excel(f"oz.xlsx", index= False)
-
-
-      
-
-
-
-
+        if os.path.exists(f"{NameFile}_{today}.xlsx"):
+            with open(f"{NameFile}_{today}.xlsx", "rb") as FileReader:
+                BinaryArchive = FileReader.read()
+    
+            try:
+                bot.send_document(id, BinaryArchive, visible_file_name = f"{NameFile}_{today}.xlsx")
+                os.remove(f"{NameFile}_{today}.xlsx")
+            except Exception as E:
+                logging.info(E)
         
