@@ -21,8 +21,8 @@ import os
 Settings = ReadJSON("Settings.json")
 
 logging.basicConfig(level=logging.INFO, encoding="utf-8", filename="LOGING.log", filemode="w",
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    datefmt='%Y-%m-%d %H:%M:%S')
+	format='%(asctime)s - %(levelname)s - %(message)s',
+	datefmt='%Y-%m-%d %H:%M:%S')
 
 # Проверка поддержки используемой версии Python.
 CheckPythonMinimalVersion(3, 10)
@@ -160,15 +160,23 @@ def ProcessText(Message: types.Message):
 				Message.chat.id,
 				"А ты кто вообще?", reply_markup= InlineKeyboardsBox.SelectionGender()
 				)
+	
 	if User.expected_type == "Letter":
-		
-		User.set_temp_property("Moderation", Message.text)
-		User.set_expected_type(None)
-		Bot.send_message(
+		text = Message.text
+
+		if len(Message.text) > 200:
+			Bot.send_message(
 			Message.chat.id,
-			"Проверь, пожалуйста, все ли в норме?\nЕсли да, то нажми на \"Подтвердить\"",
-			reply_markup= InlineKeyboardsBox.CheckLetter()
+			"Превышение лимита, пожалуйста, повторите попытку"
 			)
+		else:
+			User.set_temp_property("Moderation", Message.text)
+			User.set_expected_type(None)
+			Bot.send_message(
+				Message.chat.id,
+				f"Проверь, пожалуйста, все ли в норме?\nЕсли да, то нажми на \"Подтвердить\"\n\n{Message.text}",
+				reply_markup= InlineKeyboardsBox.CheckLetter()
+				)
 
 AdminPanel.decorators.inline_keyboards(Bot, Manager)
 
@@ -262,6 +270,7 @@ def ProcessEdit(Call: types.CallbackQuery):
 @Bot.callback_query_handler(func = lambda Callback: Callback.data.startswith("Send"))
 def ProcessSend(Call: types.CallbackQuery):
 	User = Manager.auth(Call.from_user)
+
 	try: 
 		Moderator().SaveUserSentences(User.get_property("Moderation"), User.get_property("WriteFor"))
 		Bot.send_message(
