@@ -18,6 +18,20 @@ class InlineKeyboards:
 		Menu.add(Women, Men, row_width= 1) 
 
 		return Menu
+
+	def RepeatGender(self) -> types.InlineKeyboardMarkup:
+		# Кнопочное меню.
+		Menu = types.InlineKeyboardMarkup()
+
+		# Генерация кнопок.
+		RepeatWomen = types.InlineKeyboardButton("♀️ Всё та же женщина", callback_data = f"Women")
+		RepeatMen = types.InlineKeyboardButton("️♂️ Не-не, я мужик", callback_data = f"Men")
+		
+		# Добавление кнопок в меню.
+		Menu.add(RepeatWomen, RepeatMen, row_width= 1) 
+
+		return Menu
+		
 	
 	def Dose(self) -> types.InlineKeyboardMarkup:
 		# Кнопочное меню.
@@ -97,11 +111,24 @@ class InlineKeyboards:
 		Menu = types.InlineKeyboardMarkup()
 
 		# Генерация кнопок.
-		GirlFriend = types.InlineKeyboardButton("🧚‍♀️ Для девушки", callback_data = f"GirlFriend")
-		BoyFriend = types.InlineKeyboardButton("🏋‍♂️ Для парня", callback_data = f"BoyFriend")
+		GirlFriend = types.InlineKeyboardButton("🍑 Для девушек", callback_data = f"GirlFriend")
+		BoyFriend = types.InlineKeyboardButton("💪 Для парней", callback_data = f"BoyFriend")
 
 		# Добавление кнопок в меню.
 		Menu.add(GirlFriend, BoyFriend, row_width= 1) 
+
+		return Menu
+	
+	def WriteTo(self) -> types.InlineKeyboardMarkup:
+		# Кнопочное меню.
+		Menu = types.InlineKeyboardMarkup()
+
+		# Генерация кнопок.
+		Random = types.InlineKeyboardButton("💡 Для рандом Сообщений", callback_data = f"Random")
+		Dosa = types.InlineKeyboardButton("💉 Для кнопки Доза", callback_data = f"Dosa")
+
+		# Добавление кнопок в меню.
+		Menu.add(Random, Dosa, row_width= 1) 
 
 		return Menu
 	

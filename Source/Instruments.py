@@ -3,20 +3,11 @@ import random
 
 def SendButtonDose(User, Bot, Call, InlineKeyboardsBox):
     CallName = Markdown(User.get_property("Name")).escaped_text
-    if User.get_property("Gender") =="Women":
-        Bot.send_message(
-                Call.message.chat.id, 
-                f"{CallName}, каждый день я тебе буду напоминать, что ты лучшая\\!\n\nТакже, если тебе будет мало, ты можешь использовать кнопку *ДОЗА* 🖲\n\n_А пока удачи\\! А пока удачи\\! Рад был познакомиться\\!_",
-                parse_mode = "MarkdownV2",
-                reply_markup=InlineKeyboardsBox.Dose()
-                )
-    if User.get_property("Gender") =="Men":
-        Bot.send_message(
-                Call.message.chat.id, 
-                f"{CallName}, каждый день я я тебе буду напоминать, что ты лучший\\!\n\nТакже, если тебе будет мало, ты можешь использовать кнопку *ДОЗА* 🖲\n\n_А пока удачи\\! А пока удачи\\! Рад был познакомиться\\!_",
-                parse_mode = "MarkdownV2",
-                reply_markup=InlineKeyboardsBox.Dose()
-                )
+    Bot.send_message(
+            Call.message.chat.id, 
+            f"{CallName}, каждый день я с тобой буду на связи\\!\n\nА если тебе будет мало, то просто жми на кнопку *ДОЗА* 🖲\n\n_Ну давай, удачи\\! Рад был познакомиться\\!_",
+            parse_mode = "MarkdownV2"
+            )
 
 def ChoiceSentence(Sentences):
     random_sentence = random.randint(1, len(Sentences))

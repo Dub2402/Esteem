@@ -1,9 +1,7 @@
 {
 	"token": "",
-	"women_reminders": "",
-	"women_dose": "",
-	"men_reminders": "",
-	"men_dose": "",
+	"womens": "",
+	"mens": "",
 	"password": "",
 	"qr_id": "",
 	"start_dailydose": {

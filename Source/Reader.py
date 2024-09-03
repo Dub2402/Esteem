@@ -18,16 +18,16 @@ class Reader:
 		return self.WR
 	
 	def __init__(self, Settings) -> None:
-		self.MD = self.__ReadExcel(Settings["men_dose"])
-		self.MR = self.__ReadExcel(Settings["men_reminders"])
-		self.WD = self.__ReadExcel(Settings["women_dose"])
-		self.WR = self.__ReadExcel(Settings["women_reminders"])
+		self.MD = self.__ReadExcel(Settings["mens"], column = "Доза")
+		self.MR = self.__ReadExcel(Settings["mens"], column = "Сообщения")
+		self.WD = self.__ReadExcel(Settings["womens"], column = "Доза")
+		self.WR = self.__ReadExcel(Settings["womens"], column = "Сообщения")
 
-	def __ReadExcel(self, path_file: str) -> list:
+	def __ReadExcel(self, path_file: str, column: str) -> list:
 		
 		exceldata = pandas.read_excel(path_file)
-		Products = pandas.DataFrame(exceldata, columns=['Сообщения'])
-		reading_data = Products["Сообщения"].tolist()
-
+		Products = pandas.DataFrame(exceldata, columns=[column])
+		reading_data = Products[column].tolist()
+	
 		return reading_data
 	

@@ -17,6 +17,6 @@ class ReplyKeyboard:
 		Write = types.KeyboardButton("💟 Написать послание")
 
 		# Добавление кнопок в меню.
-		Menu.add(Dose, Share, List, Write, row_width = 2)
+		Menu.add(Write, Dose, List, Share, row_width = 2)
 		
 		return Menu

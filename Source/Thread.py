@@ -58,7 +58,7 @@ class Reminder:
 						)
 				except: User.set_chat_forbidden(True)
 			else: pass
-		Hour = random.randint(7, 20)
+		Hour = random.randint(7, 19)
 		Minute = random.randint(0, 59)
 		today = datetime.datetime.today()
 		HourNow = int(datetime.datetime.now().strftime("%H"))
@@ -68,7 +68,7 @@ class Reminder:
 		if Hour > HourNow: self.__scheduler.reschedule_job(job_id='job_1', trigger='cron', start_date = tomorrow, hour =Hour, minute=Minute)
 		if Hour == HourNow:
 			if Minute> MinuteNow: self.__scheduler.reschedule_job(job_id='job_1', trigger='cron', start_date = tomorrow, hour =Hour, minute=Minute)
-			if Minute == MinuteNow:self.__scheduler.reschedule_job(job_id='job_1', trigger='cron', start_date = tomorrow, hour =Hour, minute=Minute)
+			if Minute == MinuteNow:self.__scheduler.reschedule_job(job_id='job_1', trigger='cron', hour =Hour, minute=Minute)
 			if Minute < MinuteNow: self.__scheduler.reschedule_job(job_id='job_1', trigger='cron', start_date = today, hour =Hour, minute=Minute)
 		if Hour < HourNow: self.__scheduler.reschedule_job(job_id='job_1', trigger='cron', start_date = today, hour =Hour, minute=Minute)
 		
