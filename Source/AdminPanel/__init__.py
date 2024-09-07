@@ -126,7 +126,6 @@ class Decorators:
 			except: pass
 			bot.answer_callback_query(Call.id)
 
-
 		@bot.callback_query_handler(func = lambda Callback: Callback.data.startswith("Approve_sentence"))
 		def InlineButton(Call: types.CallbackQuery):
 			User = users.auth(Call.from_user)

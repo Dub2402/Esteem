@@ -26,8 +26,8 @@ class Moderator:
             else: pass
         return ID
                 
-    def SaveUserSentences(self, sentence: str, gender: str):
-        self.Data[self.__GetFreeID()] = {"gender": gender, "sentence": sentence, "status": "add"}
+    def SaveUserSentences(self, sentence: str, gender: str, type_sentence: str):
+        self.Data[self.__GetFreeID()] = {"gender": gender, "sentence": sentence, "status": "add", "type": type_sentence}
         self.__Save(self.Data)
 
     def SendToAdmin(self, bot: TeleBot, id: int, gender: str):
@@ -97,20 +97,36 @@ class Moderator:
     def UnloadWomen(self, bot: TeleBot, id: int):
         NameFile = "Women"
         today = date.today()
-        self.BufferWomens = {"Данные": []}
+        self.BufferWomens = {"Сообщения": [], "Доза": []}
         CopyData = self.Data.copy()
         
         for ID_Sentence in CopyData.keys():
-            
-            if self.Data[ID_Sentence]["gender"] == "Women" and self.Data[ID_Sentence]["status"] == "to_excel":
-                self.BufferWomens["Данные"].append(self.Data[ID_Sentence]["sentence"])
-                del self.Data[ID_Sentence]
-                self.__Save(self.Data)
-                
-        if self.BufferWomens["Данные"]:
+            if self.Data[ID_Sentence]["type"] == "Random":
+                if self.Data[ID_Sentence]["gender"] == "Women" and self.Data[ID_Sentence]["status"] == "to_excel":
+                    self.BufferWomens["Сообщения"].append(self.Data[ID_Sentence]["sentence"])
+                    del self.Data[ID_Sentence]
+                    self.__Save(self.Data)
+                    
+            else:
+                if self.Data[ID_Sentence]["gender"] == "Women" and self.Data[ID_Sentence]["status"] == "to_excel":
+                    self.BufferWomens["Доза"].append(self.Data[ID_Sentence]["sentence"])
+                    del self.Data[ID_Sentence]
+                    self.__Save(self.Data)
+                   
+        if self.BufferWomens["Сообщения"] and self.BufferWomens["Доза"]:
             df = pandas.DataFrame.from_dict(self.BufferWomens)
             df.to_excel(f"{NameFile}_{today}.xlsx", index= False)
         
+        elif self.BufferWomens["Сообщения"]:
+            del self.BufferWomens["Доза"]
+            df = pandas.DataFrame.from_dict(self.BufferWomens)
+            df.to_excel(f"{NameFile}_{today}.xlsx", index= False)
+
+        elif self.BufferWomens["Доза"]:
+            del self.BufferWomens["Сообщения"]
+            df = pandas.DataFrame.from_dict(self.BufferWomens)
+            df.to_excel(f"{NameFile}_{today}.xlsx", index= False)
+
         else:
             bot.send_message(
             chat_id = id,
@@ -124,31 +140,51 @@ class Moderator:
             try:
                 bot.send_document(id, BinaryArchive, visible_file_name = f"{NameFile}_{today}.xlsx")
                 os.remove(f"{NameFile}_{today}.xlsx")
+
             except Exception as E:
                 logging.info(E)
+        
 
     def UnloadMen(self, bot: TeleBot, id: int):
         NameFile = "Men"
         today = date.today()
-        self.BufferMens = {"Данные": []}
+        self.BufferMens = {"Сообщения": [], "Доза": []}
         CopyData = self.Data.copy()
     
         for ID_Sentence in CopyData.keys():
+            if self.Data[ID_Sentence]["type"] == "Random":
+                if self.Data[ID_Sentence]["gender"] == "Men" and self.Data[ID_Sentence]["status"] == "to_excel":
+                    self.BufferMens["Сообщения"].append(self.Data[ID_Sentence]["sentence"])
+                    del self.Data[ID_Sentence]
+                    self.__Save(self.Data)
 
-            if self.Data[ID_Sentence]["gender"] == "Men" and self.Data[ID_Sentence]["status"] == "to_excel":
-                self.BufferMens["Данные"].append(self.Data[ID_Sentence]["sentence"])
-                del self.Data[ID_Sentence]
-                self.__Save(self.Data)
+            else:
+                if self.Data[ID_Sentence]["gender"] == "Men" and self.Data[ID_Sentence]["status"] == "to_excel":
+                    self.BufferMens["Доза"].append(self.Data[ID_Sentence]["sentence"])
+                    del self.Data[ID_Sentence]
+                    self.__Save(self.Data)
+        
+        if self.BufferMens["Сообщения"] and self.BufferMens["Доза"]:
             
-        if self.BufferMens["Данные"]:
             df = pandas.DataFrame.from_dict(self.BufferMens)
             df.to_excel(f"{NameFile}_{today}.xlsx", index= False)
+
+        elif self.BufferMens["Сообщения"]:
+            del self.BufferMens["Доза"]
+            df = pandas.DataFrame.from_dict(self.BufferMens)
+            df.to_excel(f"{NameFile}_{today}.xlsx", index= False)
+        
+        elif self.BufferMens["Доза"]:
+            del self.BufferMens["Сообщения"]
+            df = pandas.DataFrame.from_dict(self.BufferMens)
+            df.to_excel(f"{NameFile}_{today}.xlsx", index= False)
+
         else:
             bot.send_message(
             chat_id = id,
             text = "Нет данных в файле для модерации мужчин."
-            )
-
+            )   
+            
         if os.path.exists(f"{NameFile}_{today}.xlsx"):
             with open(f"{NameFile}_{today}.xlsx", "rb") as FileReader:
                 BinaryArchive = FileReader.read()
@@ -158,4 +194,3 @@ class Moderator:
                 os.remove(f"{NameFile}_{today}.xlsx")
             except Exception as E:
                 logging.info(E)
-        
