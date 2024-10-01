@@ -19,9 +19,9 @@ class Reader:
 	
 	def __init__(self, Settings) -> None:
 		self.MD = self.__ReadExcel(Settings["mens"], column = "Доза")
-		self.MR = self.__ReadExcel(Settings["mens"], column = "Сообщения")
+		self.MR = self.__ReadExcel(Settings["mens"], column = "Послания")
 		self.WD = self.__ReadExcel(Settings["womens"], column = "Доза")
-		self.WR = self.__ReadExcel(Settings["womens"], column = "Сообщения")
+		self.WR = self.__ReadExcel(Settings["womens"], column = "Послания")
 
 	def __ReadExcel(self, path_file: str, column: str) -> list:
 		

@@ -24,7 +24,7 @@ class InlineKeyboards:
 		Menu = types.InlineKeyboardMarkup()
 
 		# Генерация кнопок.
-		RepeatWomen = types.InlineKeyboardButton("♀️ Всё та же женщина", callback_data = f"Women")
+		RepeatWomen = types.InlineKeyboardButton("♀️ Всё та же девушка", callback_data = f"Women")
 		RepeatMen = types.InlineKeyboardButton("️♂️ Не-не, я мужик", callback_data = f"Men")
 		
 		# Добавление кнопок в меню.
@@ -62,7 +62,7 @@ class InlineKeyboards:
 		Menu = types.InlineKeyboardMarkup()
 
 		# Генерация кнопок.
-		SettingsDaily = types.InlineKeyboardButton("❎️ Вкл/выкл сообщения", callback_data = f"Settings_daily")
+		SettingsDaily = types.InlineKeyboardButton("❎️ Вкл/выкл послания", callback_data = f"Settings_daily")
 		Сhange = types.InlineKeyboardButton("🔄 Сменить имя", callback_data = f"Change")
 		Info = types.InlineKeyboardButton("🔆 Инфа", callback_data = f"Info")
 		Return = types.InlineKeyboardButton("🔙 Назад", callback_data = f"Return")
@@ -76,8 +76,8 @@ class InlineKeyboards:
 		Menu = types.InlineKeyboardMarkup()
 
 		# Генерация кнопок.
-		Deactivate = types.InlineKeyboardButton("❌️ Отключить сообщения", callback_data = f"Deactivate")
-		Activate = types.InlineKeyboardButton("✅️ Включить сообщения", callback_data = f"Activate")
+		Deactivate = types.InlineKeyboardButton("❌️ Отключить послания", callback_data = f"Deactivate")
+		Activate = types.InlineKeyboardButton("✅️ Включить послания", callback_data = f"Activate")
 		# Добавление кнопок в меню.
 		Menu.add(Deactivate, Activate, row_width= 1) 
 
@@ -88,7 +88,7 @@ class InlineKeyboards:
 		Menu = types.InlineKeyboardMarkup()
 
 		# Генерация кнопок.
-		Sorry = types.InlineKeyboardButton("Прости! Но так будет лучше..", callback_data = f"Sorry")
+		Sorry = types.InlineKeyboardButton("Прости! Но так будет лучше...", callback_data = f"Sorry")
 		# Добавление кнопок в меню.
 		Menu.add(Sorry, row_width= 1) 
 
@@ -124,7 +124,7 @@ class InlineKeyboards:
 		Menu = types.InlineKeyboardMarkup()
 
 		# Генерация кнопок.
-		Random = types.InlineKeyboardButton("💡 Для рандом Сообщений", callback_data = f"Random")
+		Random = types.InlineKeyboardButton("📆 Для ежедневных посланий", callback_data = f"Random")
 		Dosa = types.InlineKeyboardButton("💉 Для кнопки Доза", callback_data = f"Dosa")
 
 		# Добавление кнопок в меню.

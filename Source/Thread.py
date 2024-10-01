@@ -50,11 +50,12 @@ class Reminder:
 				except: logging.info(f"Gender для {ID} отсутствует.")
 				
 				try:
-					logging.info(f"Начата рассылка: {ID}, {Sentence}")
 					CallName = User.get_property("Name")	
+					Text = Sentence % CallName
+					logging.info(f"Начата рассылка: {ID}, {Text}")
 					self.__Bot.send_message(
 						ID,
-						text = f"{CallName}, {Sentence}"
+						text = f"{Text}"
 						)
 				except: User.set_chat_forbidden(True)
 			else: pass

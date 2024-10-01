@@ -97,13 +97,13 @@ class Moderator:
     def UnloadWomen(self, bot: TeleBot, id: int):
         NameFile = "Women"
         today = date.today()
-        self.BufferWomens = {"Сообщения": [], "Доза": []}
+        self.BufferWomens = {"Послания": [], "Доза": []}
         CopyData = self.Data.copy()
         
         for ID_Sentence in CopyData.keys():
             if self.Data[ID_Sentence]["type"] == "Random":
                 if self.Data[ID_Sentence]["gender"] == "Women" and self.Data[ID_Sentence]["status"] == "to_excel":
-                    self.BufferWomens["Сообщения"].append(self.Data[ID_Sentence]["sentence"])
+                    self.BufferWomens["Послания"].append(self.Data[ID_Sentence]["sentence"])
                     del self.Data[ID_Sentence]
                     self.__Save(self.Data)
                     
@@ -113,17 +113,17 @@ class Moderator:
                     del self.Data[ID_Sentence]
                     self.__Save(self.Data)
                    
-        if self.BufferWomens["Сообщения"] and self.BufferWomens["Доза"]:
+        if self.BufferWomens["Послания"] and self.BufferWomens["Доза"]:
             df = pandas.DataFrame.from_dict(self.BufferWomens)
             df.to_excel(f"{NameFile}_{today}.xlsx", index= False)
         
-        elif self.BufferWomens["Сообщения"]:
+        elif self.BufferWomens["Послания"]:
             del self.BufferWomens["Доза"]
             df = pandas.DataFrame.from_dict(self.BufferWomens)
             df.to_excel(f"{NameFile}_{today}.xlsx", index= False)
 
         elif self.BufferWomens["Доза"]:
-            del self.BufferWomens["Сообщения"]
+            del self.BufferWomens["Послания"]
             df = pandas.DataFrame.from_dict(self.BufferWomens)
             df.to_excel(f"{NameFile}_{today}.xlsx", index= False)
 
@@ -148,13 +148,13 @@ class Moderator:
     def UnloadMen(self, bot: TeleBot, id: int):
         NameFile = "Men"
         today = date.today()
-        self.BufferMens = {"Сообщения": [], "Доза": []}
+        self.BufferMens = {"Послания": [], "Доза": []}
         CopyData = self.Data.copy()
     
         for ID_Sentence in CopyData.keys():
             if self.Data[ID_Sentence]["type"] == "Random":
                 if self.Data[ID_Sentence]["gender"] == "Men" and self.Data[ID_Sentence]["status"] == "to_excel":
-                    self.BufferMens["Сообщения"].append(self.Data[ID_Sentence]["sentence"])
+                    self.BufferMens["Послания"].append(self.Data[ID_Sentence]["sentence"])
                     del self.Data[ID_Sentence]
                     self.__Save(self.Data)
 
@@ -164,18 +164,18 @@ class Moderator:
                     del self.Data[ID_Sentence]
                     self.__Save(self.Data)
         
-        if self.BufferMens["Сообщения"] and self.BufferMens["Доза"]:
+        if self.BufferMens["Послания"] and self.BufferMens["Доза"]:
             
             df = pandas.DataFrame.from_dict(self.BufferMens)
             df.to_excel(f"{NameFile}_{today}.xlsx", index= False)
 
-        elif self.BufferMens["Сообщения"]:
+        elif self.BufferMens["Послания"]:
             del self.BufferMens["Доза"]
             df = pandas.DataFrame.from_dict(self.BufferMens)
             df.to_excel(f"{NameFile}_{today}.xlsx", index= False)
         
         elif self.BufferMens["Доза"]:
-            del self.BufferMens["Сообщения"]
+            del self.BufferMens["Послания"]
             df = pandas.DataFrame.from_dict(self.BufferMens)
             df.to_excel(f"{NameFile}_{today}.xlsx", index= False)
 

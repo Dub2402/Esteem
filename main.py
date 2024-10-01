@@ -96,7 +96,7 @@ def ProcessShareWithFriends(Message: types.Message):
     Bot.send_photo(
         Message.chat.id, 
         photo = Settings["qr_id"],
-        caption='@Ddoza_bot\n@Ddoza_bot\n@Ddoza_bot\n\nБПС | Бот повышения самооценки!\nНавали побольше кринжатины! Тебе сюда 🤪', 
+        caption='@Ddoza_bot\n@Ddoza_bot\n@Ddoza_bot\n\n*БПС | Бот повышения самооценки!*\nУлыбнись, мой милый друг, у-лыб-нись! 😊', 
         reply_markup=InlineKeyboardsBox.AddShare()
         )
 
@@ -130,7 +130,7 @@ def ProcessWrite(Message: types.Message):
     User = Manager.auth(Message.from_user)
     Bot.send_message(
         Message.chat.id, 
-        "Выберите, для кого вы хотите написать послание:", reply_markup= InlineKeyboardsBox.WriteFor())
+        "Выбери, для кого ты хочешь написать послание:", reply_markup= InlineKeyboardsBox.WriteFor())
 
 @Bot.message_handler(content_types=["text"])
 def ProcessText(Message: types.Message):
@@ -149,7 +149,7 @@ def ProcessText(Message: types.Message):
                 f"Приятно познакомиться, {CallName}!")
                 Bot.send_message(
                 Message.chat.id,
-                "Ну пол-то я надеюсь ты не сменил?\nА то я уже сомневаюсь 🤭",
+                "А пол-то я надеюсь ты не сменил? 🤭\nА то я уже сомневаюсь.",
                 reply_markup= InlineKeyboardsBox.RepeatGender()
                 )
         except:
@@ -178,8 +178,9 @@ def ProcessText(Message: types.Message):
             User.set_expected_type(None)
             Bot.send_message(
                 Message.chat.id,
-                f"Проверь, пожалуйста, все ли в норме?\nЕсли да, то подтверди.\n\n{Message.text}",
-                reply_markup= InlineKeyboardsBox.CheckLetter()
+                f"Проверь, пожалуйста, все ли в норме? Если да, то подтверди\\!\n\n*Твой текст:*\n{Message.text}",
+                reply_markup= InlineKeyboardsBox.CheckLetter(),
+                parse_mode= "MarkdownV2"
                 )
 
 AdminPanel.decorators.inline_keyboards(Bot, Manager)
@@ -200,12 +201,10 @@ def ProcessMen(Call: types.CallbackQuery):
         "Я так и понял, что тут самец!)",
         reply_markup=ReplyKeyboardBox.AddMenu(User)
         )
-    try:
-        if User.get_property("Change"):
-            User.clear_temp_properties()
-    except:
-        SendButtonDose(User, Bot, Call, InlineKeyboardsBox)
     
+    SendButtonDose(User, Bot, Call, InlineKeyboardsBox)
+    User.clear_temp_properties()
+
     Bot.answer_callback_query(Call.id)
 
 @Bot.callback_query_handler(func = lambda Callback: Callback.data.startswith("Women"))
@@ -217,11 +216,9 @@ def ProcessWomen(Call: types.CallbackQuery):
         "Уфф, а я чувствовал, что пахнет самочкой)", 
         reply_markup=ReplyKeyboardBox.AddMenu(User)
         )
-    try:
-        if User.get_property("Change"):
-            User.clear_temp_properties()
-    except:
-        SendButtonDose(User, Bot, Call, InlineKeyboardsBox)
+
+    SendButtonDose(User, Bot, Call, InlineKeyboardsBox)
+    User.clear_temp_properties()
 
     Bot.answer_callback_query(Call.id)
 
@@ -231,7 +228,7 @@ def ProcessWomen(Call: types.CallbackQuery):
 
     Bot.send_message(
             Call.message.chat.id, 
-            "Отличный выбор!\nА теперь выбери для чего", 
+            "Отличный выбор!\nА теперь выбери для чего:", 
             reply_markup=InlineKeyboardsBox.WriteTo()
     )
     User.set_temp_property("WriteFor", "Women")
@@ -244,7 +241,7 @@ def ProcessMen(Call: types.CallbackQuery):
 
     Bot.send_message(
             Call.message.chat.id, 
-            "Отличный выбор!\nА теперь выбери для чего", 
+            "Отличный выбор!\nА теперь выбери для чего:", 
             reply_markup=InlineKeyboardsBox.WriteTo()
     )
     User.set_temp_property("WriteFor", "Men")
@@ -254,13 +251,9 @@ def ProcessMen(Call: types.CallbackQuery):
 @Bot.callback_query_handler(func = lambda Callback: Callback.data.startswith("Random"))
 def ProcessMen(Call: types.CallbackQuery):
     User = Manager.auth(Call.from_user)
-    if User.get_property("WriteFor") == "Men":
-        callgender = "парней"
-    if User.get_property("WriteFor") == "Women":
-        callgender = "дам"
     Bot.send_message(
             Call.message.chat.id, 
-            f"Супер! Кому-то из {callgender}, при нажатии на кнопку \"Доза\" крупно повезет!\nУ тебя лимит на 80 символов 👇"
+            f"Супер! Кто-то скоро обрадуется твому посланию!)\nУ тебя лимит на 200 символов 👇"
     )
     User.set_temp_property("WriteTo", "Random")
     User.set_expected_type("Letter")
@@ -270,13 +263,9 @@ def ProcessMen(Call: types.CallbackQuery):
 @Bot.callback_query_handler(func = lambda Callback: Callback.data.startswith("Dosa"))
 def ProcessMen(Call: types.CallbackQuery):
     User = Manager.auth(Call.from_user)
-    if User.get_property("WriteFor") == "Men":
-        callgender = "парней"
-    if User.get_property("WriteFor") == "Women":
-        callgender = "дам"
     Bot.send_message(
             Call.message.chat.id, 
-            f"Супер! Кто-то из {callgender} получит твоё послание-шедевр!\nУ тебя лимит на 200 символов 👇"
+            f"Отлично! Кому-то скоро очень крупно повезет!)\nУ тебя лимит на 80 символов 👇"
     )
     User.set_temp_property("WriteTo", "Dosa")
     User.set_expected_type("Letter")
@@ -307,7 +296,7 @@ def ProcessSend(Call: types.CallbackQuery):
         Moderator().SaveUserSentences(User.get_property("Moderation"), User.get_property("WriteFor"), User.get_property("WriteTo"))
         Bot.send_message(
                 Call.message.chat.id, 
-                "Текст принят! Модеры его скоро проверят и твоё послание увидит большой мир 🫶\nПиши ещё!"
+                "Спасибо, текст принят!) Скоро модераторы его проверят, и твое послание увидит большой мир 😘. Пиши ещё!"
                 )
     except: Bot.send_message(
             Call.message.chat.id, 
@@ -343,7 +332,7 @@ def ProcessChangeName(Call: types.CallbackQuery):
     User.set_expected_type("Name")
     Bot.send_message(
             Call.message.chat.id, 
-            "Ну и как мне тебя называть?")
+            "Ну и как теперь тебя называть?")
     User.set_temp_property("Change", True)
 
     Bot.answer_callback_query(Call.id)
@@ -354,7 +343,7 @@ def ProcessInfo(Call: types.CallbackQuery):
 
     Bot.send_message(
         Call.message.chat.id,
-        text = "@Ddoza\\_bot предназначен для поднятия настроения и развлечения\\! 🫠\n\nБот ежедневно отправляет вам уведомления в *рандомное время*, ну а ваше дело — или игнорировать, или читать их\\!\n\nТакже вы можете порадовать другого человека, написав ему свое *собственное послание*\\! ✉️ Это будет максимально прикольно\\!\\)\n\n_*Пользуйтесь, и не забывайте делиться с друзьями\\!*_",
+        text = "@Ddoza\\_bot предназначен сугубо для развлечения и поднятия настроения ☺️\\!\n\nВы будете ежедневно получать сообщения поддержки от нашего любимого бота в абсолютно *рандомное время*, а также сами можете нажимать на кнопку \"💉Доза\" и извлекать определённый заряд позитива!\n\nНе упустите шанс написать свое *собственное послание* послание! ✉️ Ведь оно может прийти не только другим, но и вам самим 😉\\!\n\n_*Пользуйтесь, и не забывайте делиться с друзьями\\!*_",
         parse_mode= "MarkdownV2"
     )
 
@@ -396,23 +385,24 @@ def ProcessSettingsDaily(Call: types.CallbackQuery):
 @Bot.callback_query_handler(func = lambda Callback: Callback.data.startswith("Sorry"))
 def ProcessSorry(Call: types.CallbackQuery):
     User = Manager.auth(Call.from_user)
-    Bot.delete_message(Call.message.chat.id, Call.message.id)
-    User.set_property("Active", False)
     Bot.send_message(
             Call.message.chat.id, 
-            "Ежедневная доза отключена!")
+            "Ежедневные послания отключены!")
+    Bot.delete_message(Call.message.chat.id, Call.message.id)
+    User.set_property("Active", False)
+    
 
     Bot.answer_callback_query(Call.id)
 
 @Bot.callback_query_handler(func = lambda Callback: Callback.data.startswith("Good"))
 def ProcessGood(Call: types.CallbackQuery):
     User = Manager.auth(Call.from_user)
-    Bot.delete_message(Call.message.chat.id, Call.message.id)
-    User.set_property("Active", True)
     Bot.send_message(
             Call.message.chat.id, 
-            "Ежедневная доза включена!")
-
+            "Ежедневные послания включены!")
+    Bot.delete_message(Call.message.chat.id, Call.message.id)
+    User.set_property("Active", True)
+    
     Bot.answer_callback_query(Call.id)
 
 @Bot.message_handler(content_types = ["audio", "document", "video"])
