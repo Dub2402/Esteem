@@ -9,7 +9,7 @@ def SendButtonDose(User, Bot, Call, InlineKeyboardsBox):
             parse_mode = "MarkdownV2"
             )
 
-def ChoiceSentence(Sentences):
+def ChoiceSentence(Sentences) -> str:
     random_sentence = random.randint(1, len(Sentences))
     
     for Index in range(len(Sentences)):

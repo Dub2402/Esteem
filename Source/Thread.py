@@ -4,6 +4,7 @@ from .Instruments import ChoiceSentence
 from apscheduler.schedulers.background import BackgroundScheduler
 from dublib.TelebotUtils import UsersManager
 from telebot import TeleBot
+from telebot.apihelper import ApiTelegramException
 
 import  datetime
 import os
@@ -51,13 +52,21 @@ class Reminder:
 				
 				try:
 					CallName = User.get_property("Name")	
-					Text = Sentence % CallName
+					Text = Sentence.replace("%s", CallName)
 					logging.info(f"Начата рассылка: {ID}, {Text}")
 					self.__Bot.send_message(
 						ID,
 						text = f"{Text}"
 						)
-				except: User.set_chat_forbidden(True)
+					logging.info(f"Сообщение отправлено: {ID}, {Text}")
+					
+				except ApiTelegramException: 
+					logging.info(f"Пользователь заблокировал бота: {ID}, {Text}")
+					User.set_chat_forbidden(True)
+				except Exception as E:
+					logging.info(f"{E}: {ID}, {Text}")
+
+
 			else: pass
 		Hour = random.randint(7, 19)
 		Minute = random.randint(0, 59)
@@ -69,7 +78,7 @@ class Reminder:
 		if Hour > HourNow: self.__scheduler.reschedule_job(job_id='job_1', trigger='cron', start_date = tomorrow, hour =Hour, minute=Minute)
 		if Hour == HourNow:
 			if Minute> MinuteNow: self.__scheduler.reschedule_job(job_id='job_1', trigger='cron', start_date = tomorrow, hour =Hour, minute=Minute)
-			if Minute == MinuteNow:self.__scheduler.reschedule_job(job_id='job_1', trigger='cron', hour =Hour, minute=Minute)
+			if Minute == MinuteNow:self.__scheduler.reschedule_job(job_id='job_1', trigger='cron', hour = Hour, minute=Minute)
 			if Minute < MinuteNow: self.__scheduler.reschedule_job(job_id='job_1', trigger='cron', start_date = today, hour =Hour, minute=Minute)
 		if Hour < HourNow: self.__scheduler.reschedule_job(job_id='job_1', trigger='cron', start_date = today, hour =Hour, minute=Minute)
 		

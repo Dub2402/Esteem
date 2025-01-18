@@ -1,4 +1,4 @@
-from dublib.TelebotUtils import UserData
+from dublib.TelebotUtils.Users import UserData
 from telebot import types
 
 class InlineKeyboards:

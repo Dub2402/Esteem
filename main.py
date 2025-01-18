@@ -6,10 +6,11 @@ from Source.Thread import Reminder
 from Source.AdminPanel import Panel
 from Source.Moderator import Moderator
 
-from dublib.Methods.JSON import ReadJSON, WriteJSON
+from dublib.Methods.Filesystem import ReadJSON, WriteJSON
 from dublib.Methods.System import CheckPythonMinimalVersion, Clear
 from dublib.Methods.Filesystem import MakeRootDirectories
 from dublib.TelebotUtils import UsersManager
+from dublib.TelebotUtils.Cache import TeleCache
 from telebot import types
 from apscheduler.schedulers.background import BackgroundScheduler
 
@@ -23,6 +24,9 @@ Settings = ReadJSON("Settings.json")
 logging.basicConfig(level=logging.INFO, encoding="utf-8", filename="LOGING.log", filemode="w",
     format='%(asctime)s - %(levelname)s - %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S')
+
+logging.getLogger("pyTelegramBotAPI").setLevel(logging.WARNING)
+logging.getLogger("requests").setLevel(logging.WARNING)
 
 # Проверка поддержки используемой версии Python.
 CheckPythonMinimalVersion(3, 10)
@@ -48,17 +52,25 @@ scheduler = BackgroundScheduler()
 reminder = Reminder(Bot, Manager, Settings, reader, scheduler)
 AdminPanel = Panel()
 
-#==========================================================================================#
-# >>>>> НАСТРОЙКИ APSHEDULER <<<<< #
-#==========================================================================================#
 
-StartDailyDose = Settings["start_dailydose"]
+# Инициализация менеджера кэша.
+Cacher = TeleCache()
+# Установка данных для выгрузки медиафайлов.
+Cacher.set_options(Settings["token"], Settings["chat_id"])
+
+# Получение структуры данных кэшированного файла.
+try:
+	File = Cacher.get_cached_file(Settings["qr_id"], type = types.InputMediaPhoto)
+	# Получение ID кэшированного файла.
+	FileID = Cacher[Settings["qr_id"]]
+except Exception:
+	pass
 
 #==========================================================================================#
 # >>>>> ДОБАВЛЕНИЕ ЗАДАНИЙ В APSHEDULER <<<<< #
 #==========================================================================================#
 
-job = scheduler.add_job(func=reminder.StartDailyDose, trigger='cron', hour = StartDailyDose["hour"], minute=StartDailyDose["minute"], id = 'job_1')
+job = scheduler.add_job(func=reminder.StartDailyDose, trigger='cron', hour = Settings["start_dailydose"].split(":")[0], minute = Settings["start_dailydose"].split(":")[1], id = 'job_1')
 scheduler.start()
 
 AdminPanel.decorators.commands(Bot, Manager, Settings["password"])
@@ -95,7 +107,7 @@ def ProcessShareWithFriends(Message: types.Message):
 
     Bot.send_photo(
         Message.chat.id, 
-        photo = Settings["qr_id"],
+        photo = FileID,
         caption="@Ddoza\\_bot\n@Ddoza\\_bot\n@Ddoza\\_bot\n\n*БПС \\| Бот повышения самооценки\\!*\nУлыбнись, мой милый друг, у\\-лыб\\-нись\\! 😊", 
         reply_markup=InlineKeyboardsBox.AddShare(), 
         parse_mode= "MarkdownV2"

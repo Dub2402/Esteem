@@ -4,8 +4,6 @@
 	"mens": "",
 	"password": "",
 	"qr_id": "",
-	"start_dailydose": {
-		"hour": 18,
-		"minute": 18
-	}
+	"chat_id": null,
+	"start_dailydose": "06:50"
 }
